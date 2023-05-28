@@ -1,46 +1,32 @@
 #!/usr/bin/python3
-"""
-index
-"""
-
+""" creates a route for the status """
 from flask import jsonify
 from api.v1.views import app_views
-
 from models import storage
 
 
-@app_views.route("/status", methods=['GET'], strict_slashes=False)
+@app_views.route("/status", strict_slashes=False)
 def status():
-    """
-    status route
-    :return: response with json
-    """
-    data = {
-        "status": "OK"
-    }
+    """ configures the status route """
 
-    resp = jsonify(data)
-    resp.status_code = 200
-
-    return resp
+    return jsonify({"status": "OK"})
 
 
-@app_views.route("/stats", methods=['GET'], strict_slashes=False)
+@app_views.route("/stats", strict_slashes=False)
 def stats():
-    """
-    stats of all objs route
-    :return: json of all objs
-    """
-    data = {
-        "amenities": storage.count("Amenity"),
-        "cities": storage.count("City"),
-        "places": storage.count("Place"),
-        "reviews": storage.count("Review"),
-        "states": storage.count("State"),
-        "users": storage.count("User"),
+    """ return the stats of objects """
+
+    models = {
+        "amenities": "Amenity",
+        "cities": "City",
+        "places": "Place",
+        "reviews": "Review",
+        "states": "State",
+        "users": "User"
+    }
+    stat_dict = {
+        att: storage.count(cls)
+        for att, cls in models.items()
     }
 
-    resp = jsonify(data)
-    resp.status_code = 200
-
-    return resp
+    return jsonify(stat_dict)
